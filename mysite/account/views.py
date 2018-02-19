@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm
+from .forms import LoginForm, RegistrationForm, UserProfileForm
 
 #def user_login(request):
 #    if request.method == "POST":  # 返回HTTP请求类型的字符串
@@ -24,3 +24,24 @@ from .forms import LoginForm
 #    if request.method == "GET":
 #        login_form = LoginForm()
 #        return render(request, "account/login.html", {'form': login_form})
+
+def register(request):
+    if request.method == "POST":
+        user_form = RegistrationForm(request.POST)
+        userprofile_form = UserProfileForm(request.POST)  # 新增
+        if user_form.is_valid() & userprofile_form.is_valid():
+            # 为什么不直接保存到数据库, 是因为此时保存的数据中没有密码吗
+            new_user = user_form.save(commit=False)
+            new_user.set_password(user_form.cleaned_data['password'])
+            new_user.save()
+            # 同时保存两张表
+            new_profile = userprofile_form.save(commit=False)  # 新增
+            new_profile.user = new_user  # 新增
+            new_profile.save()  # 新增
+            return HttpResponse("successfully")
+        else:
+            return HttpResponse("sorry, the information is invalid")
+    else:
+        user_form = RegistrationForm()
+        userprofile_form = UserProfileForm()  # 新增
+        return render(request, 'account/register.html', {'form': user_form, "profile":userprofile_form})
