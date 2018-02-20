@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, views
 from .forms import LoginForm, RegistrationForm, UserProfileForm
 
 #def user_login(request):
