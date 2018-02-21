@@ -100,3 +100,15 @@ def myself_edit(request):
         userprofile_form = UserProfileForm(initial={"birth":userprofile.birth, "phone":userprofile.phone})
         userinfo_form = UserInfoForm(initial={"school":userinfo.school, "company":userinfo.company, "profession":userinfo.profession, "address":userinfo.address, "aboutme":userinfo.aboutme})
         return render(request, "account/myself_edit.html", {"user_form":user_form, "userprofile_form":userprofile_form, "userinfo_form":userinfo_form})
+
+
+@login_required(login_url='/account/login/')
+def my_image(request):
+    if request.method == "POST":
+        img = request.POST['img']  # 得到前端以POST方式提交的图片信息
+        userinfo = UserInfo.objects.get(userinfo=request.user.id)
+        userinfo.photo = img
+        userinfo.save()
+        return HttpResponse("1")
+    else:
+        return render(request, 'account/imagecrop.html')
