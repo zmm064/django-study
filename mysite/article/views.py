@@ -1,10 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 
-from .models import ArticleColumn
+from .models import ArticleColumn, ArticlePost
 from .forms import ArticleColumnForm, ArticlePostForm
 
 # Create your views here.
@@ -31,7 +31,7 @@ def article_column(request):
 @login_required(login_url='/account/login')
 @require_POST
 @csrf_exempt
-def rename_article_column(request):
+def rename_article_column(request):  # 重命名只接收post请求处理数据，不考虑get请求渲染表单的情况
     column_name = request.POST["column_name"]
     column_id = request.POST["column_id"]
     try:
@@ -45,7 +45,7 @@ def rename_article_column(request):
 @login_required(login_url='/account/login')
 @require_POST
 @csrf_exempt
-def del_article_column(request):
+def del_article_column(request):  # 删除只接收post请求处理数据，不考虑get请求渲染表单的情况
     column_id = request.POST["column_id"]
     try:
         line = ArticleColumn.objects.get(id=column_id)
@@ -78,3 +78,16 @@ def article_post(request):
         return render(request, 
                       "article/column/article_post.html", 
                       {"article_post_form":article_post_form, "article_columns":article_columns})
+
+
+@login_required(login_url='/account/login')
+def article_list(request):
+    # articles = ArticlePost.objects.all()
+    articles = ArticlePost.objects.filter(author=request.user)
+    return render(request, "article/column/article_list.html", {"articles":articles})
+
+@login_required(login_url='/account/login')
+def article_detail(request, id, slug):
+    article = get_object_or_404(ArticlePost, id=id, slug=slug)
+    return render(request, "article/column/article_detail.html", {"article":article})
+

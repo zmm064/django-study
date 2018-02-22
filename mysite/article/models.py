@@ -25,7 +25,7 @@ class ArticlePost(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ("title",)
+        ordering = ("-updated",)
         index_together = (('id', 'slug'),)  # 给这两个字段添加索引
 
     def __str__(self):

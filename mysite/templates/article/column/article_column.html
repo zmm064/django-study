@@ -36,6 +36,7 @@
             content: '<div class="text-center" style="margin-top:20px"><p>请输入新的栏目名称</p><p>{{column_form.column}}</p></div>',
             btn:['确定', '取消'],
             // 点击确定后通过ajax发送请求数据
+            // 这里通过js创建输入框，并从输入框中获取数据，而非传统的表单提交来发送数据
             yes: function(index, layero){
                 column_name = $('#id_column').val();
                 $.ajax({
