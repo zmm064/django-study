@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import ArticleColumn, ArticlePost
 from .forms import ArticleColumnForm, ArticlePostForm
@@ -83,8 +84,20 @@ def article_post(request):
 @login_required(login_url='/account/login')
 def article_list(request):
     # articles = ArticlePost.objects.all()
-    articles = ArticlePost.objects.filter(author=request.user)
-    return render(request, "article/column/article_list.html", {"articles":articles})
+    articles_list = ArticlePost.objects.filter(author=request.user)
+    paginator = Paginator(articles_list, 2)
+    page = request.GET.get('page')
+    try:
+        current_page = paginator.page(page)
+    except PageNotAnInteger:
+        current_page = paginator.page(1)
+    except EmptyPage:
+        current_page = paginator.page(paginator.num_pages)
+    # object_list是Page对象的属性，能够得到该页所有的对象列表
+    articles = current_page.object_list
+    return render(request, 
+                  "article/column/article_list.html", 
+                  {"articles":articles, "page": current_page})
 
 @login_required(login_url='/account/login')
 def article_detail(request, id, slug):
