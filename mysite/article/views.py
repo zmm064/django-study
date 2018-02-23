@@ -102,3 +102,26 @@ def del_article(request):
         return HttpResponse("1")
     except:
     	return HttpResponse("2")
+
+
+@login_required(login_url='/account/login')
+@csrf_exempt
+def redit_article(request, article_id):
+    if request.method == "GET":
+        article_columns = request.user.article_column.all()  # 获取用户所有的文章栏目信息
+        article = ArticlePost.objects.get(id=article_id)  # 通过文章id获取文章对象
+        this_article_form = ArticlePostForm(initial={"title":article.title})
+        return render(request, 
+                      "article/column/redit_article.html", 
+                      {"article":article, "article_columns":article_columns, "this_article_form":this_article_form})
+    else:
+        redit_article = ArticlePost.objects.get(id=article_id)
+        try:
+            redit_article.column = request.user.article_column.get(id=request.POST['column_id'])
+            redit_article.title = request.POST['title']
+            #redit_article.slug = request.POST['title']
+            redit_article.body = request.POST['body']
+            redit_article.save()
+            return HttpResponse("1")
+        except:
+            return HttpResponse("2")
