@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, views
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 
 from .forms import LoginForm, RegistrationForm, UserProfileForm, UserInfoForm, UserForm
 from .models import UserProfile, UserInfo
@@ -44,7 +45,7 @@ def register(request):
             new_profile.save()  # 新增
             # 保存第三张表
             UserInfo.objects.create(user=new_user)
-            return HttpResponse("successfully")
+            return HttpResponseRedirect(reverse("account:user_login"))
         else:
             return HttpResponse("sorry, the information is invalid")
     else:

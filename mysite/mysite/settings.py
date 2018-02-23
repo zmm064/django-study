@@ -29,7 +29,7 @@ DEBUG = True    # debug模式
 ALLOWED_HOSTS = []
 
 # 登录后重定向的设置
-LOGIN_REDIRECT_URL = '/blog/'
+LOGIN_REDIRECT_URL = '/home/'
 # Application definition
 
 INSTALLED_APPS = [
