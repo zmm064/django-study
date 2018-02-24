@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.models import User
 
 from .models import ArticleColumn, ArticlePost
 from .forms import ArticleColumnForm, ArticlePostForm

@@ -6,7 +6,9 @@
 <div>
     <header>
         <h1>{{ article.title }}</h1>
-        <p>{{ user.username }}</p>
+        <a href="{% url 'article:author_articles' article.author.username %}">
+            <p>{{ user.username }}</p>
+        </a>
     </header>
 
     <link rel="stylesheet" href="{% static 'editor/css/editormd.preview.css' %}" />
