@@ -15,6 +15,7 @@
         <span style="margin-left:20px" class="glyphicon glyphicon-thumbs-up">
             {{ total_likes }}like{{ total_likes | pluralize }}
         </span>
+        <span style="margin-left: 20px">{{ total_views }}view{{ total_views | pluralize }}</span>
     </header>
 
     <link rel="stylesheet" href="{% static 'editor/css/editormd.preview.css' %}" />
@@ -27,6 +28,7 @@
     <p class="text-center">
         <a onclick="like_article({{article.id}}, 'like')" href="#"><span class="glyphicon glyphicon-thumbs-up">like</span></a>
         <a onclick="like_article({{article.id}}, 'unlike')" href="#"><span style="margin-left: 15px;" class="glyphicon glyphicon-thumbs-down">unlike</span></a>
+        
     </p>
     <p class="text-center"><strong>点赞本文的读者</strong></p>
 
