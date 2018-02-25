@@ -50,9 +50,21 @@ def article_detail(request, id, slug):
     article = get_object_or_404(ArticlePost, id=id, slug=slug)
     # 比较好的实践是用“对象类型:对象ID:对象属性”来命名一个键
     total_views = r.incr(f'article:{article.id}:views')
+
+    # views和ranking使用的值不存在一起
+
+    # 创建一个有序集合article_ranking
+    r.zincrby('article_ranking', article.id, 1)
+    # 得到article_ranking中排序前10的文章ID
+    article_ranking = r.zrange('article_ranking', 0, -1, desc=True)[:10]
+    article_ranking_ids = [int(id) for id in article_ranking]
+    # 得到article_ranking中排序前10的文章
+    most_viewed = list(ArticlePost.objects.filter(id__in=article_ranking_ids))
+    most_viewed.sort(key=lambda x: article_ranking_ids.index(x.id))
+
     return render(request, 
                   "article/list/article_detail.html", 
-                  {"article":article, "total_views":total_views})
+                  {"article":article, "total_views":total_views, "most_viewed": most_viewed})
 
 
 @csrf_exempt
