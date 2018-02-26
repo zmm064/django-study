@@ -6,7 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 
-from .models import ArticleColumn, ArticlePost
+from .models import ArticleColumn, ArticlePost, Comment
+from .forms import CommentForm
 
 
 import redis
@@ -51,7 +52,7 @@ def article_detail(request, id, slug):
     # 比较好的实践是用“对象类型:对象ID:对象属性”来命名一个键
     total_views = r.incr(f'article:{article.id}:views')
 
-    # views和ranking使用的值不存在一起
+    ###### views和ranking使用的值不存在一起 #####
 
     # 创建一个有序集合article_ranking
     r.zincrby('article_ranking', article.id, 1)
@@ -62,9 +63,17 @@ def article_detail(request, id, slug):
     most_viewed = list(ArticlePost.objects.filter(id__in=article_ranking_ids))
     most_viewed.sort(key=lambda x: article_ranking_ids.index(x.id))
 
+    if request.method == "POST":
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.article = article
+            new_comment.save()
+
+    comment_form = CommentForm()
     return render(request, 
                   "article/list/article_detail.html", 
-                  {"article":article, "total_views":total_views, "most_viewed": most_viewed})
+                  {"article":article, "total_views":total_views, "most_viewed": most_viewed, "comment_form":comment_form})
 
 
 @csrf_exempt
