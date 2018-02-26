@@ -97,8 +97,19 @@
     {% endfor %}
 </ol>
 <hr />
-<p class="text-center"><h3>最新文章</h3></p>
-{% latest_articles 4 %}
+    <p class="text-center"><h3>最新文章</h3></p>
+    {% latest_articles 4 %}
+<hr />
+    <p class="text-center"><h3>最多评论文章</h3></p>
+    {#将自定义的标签所得到的对象赋值给一个变量，然后循环此变量#}
+    {% most_commented_articles as most_comments %}
+    <ul>
+        {% for comment_article in most_comments %}
+        <li>
+            <a href="{{comment_article.get_url_path}}">{{ comment_article.title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
 </div>
 </div>
 
