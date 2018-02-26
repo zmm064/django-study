@@ -1,6 +1,9 @@
+import markdown
+
 from django import template 
 from article.models import ArticlePost
 from django.db.models import Count
+from django.utils.safestring import mark_safe
 #创建了一个实例对象register，这个对象包含了simple_tag方法（以及另外两种）
 register = template.Library()
 
@@ -25,3 +28,10 @@ def latest_articles(n=5):
 def most_commented_articles(n=3):
     return ArticlePost.objects.annotate(
         total_comments=Count('comments')).order_by("-total_comments")[:n]
+
+
+@register.filter(name='markdown')  # 以name='markdown'为下面的选择器函数重命名
+def markdown_filter(text):
+    return mark_safe(markdown.markdown(text))
+
+
