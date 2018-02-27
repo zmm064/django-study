@@ -14,10 +14,19 @@ class ArticleColumn(models.Model):
         return self.column
 
 
+class ArticleTag(models.Model):
+    author = models.ForeignKey(User, related_name="tags")
+    tag = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.tag
+
+
 class ArticlePost(models.Model):
     author = models.ForeignKey(User, related_name="article")
     column = models.ForeignKey(ArticleColumn, related_name="article_column")
     users_like = models.ManyToManyField(User, related_name="articles_like", blank=True)
+    article_tags = models.ManyToManyField(ArticleTag, related_name='article_posts', blank=True)
 
     title   = models.CharField(max_length=200)
     slug    = models.SlugField(max_length=200)
