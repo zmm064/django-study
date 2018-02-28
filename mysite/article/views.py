@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -69,17 +71,25 @@ def article_post(request):
                 new_article.author = request.user
                 new_article.column = request.user.article_column.get(id=request.POST['column_id'])
                 new_article.save()
+                tags = request.POST['tags']
+                if tags:
+                    for each in json.loads(tags):
+                        tag = request.user.tags.get(tag=each)
+                        new_article.article_tags.add(tag)
+
                 return HttpResponse("1")
             except:
+                raise
                 return HttpResponse("2")
         else:
             return HttpResponse("3")
     else:
         article_post_form = ArticlePostForm()  # 在页面中渲染表单
         article_columns = request.user.article_column.all()  # 在页面中渲染所有栏目
+        article_tags = request.user.tags.all()
         return render(request, 
                       "article/column/article_post.html", 
-                      {"article_post_form":article_post_form, "article_columns":article_columns})
+                      {"article_post_form":article_post_form, "article_columns":article_columns, "article_tags":article_tags})
 
 
 @login_required(login_url='/account/login')
