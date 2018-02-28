@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.db.models import Count
 from django.http import HttpResponse
 
 from .models import ArticleColumn, ArticlePost, Comment
@@ -71,9 +72,16 @@ def article_detail(request, id, slug):
             new_comment.save()
 
     comment_form = CommentForm()
+
+    # 当前文章的所有文章标签的id列表
+    article_tags_ids = article.article_tags.values_list("id", flat=True)
+    similar_articles = ArticlePost.objects.filter(article_tags__in=article_tags_ids)
+    similar_articles = similar_articles.annotate(same_tags=Count("article_tags")).order_by('-same_tags', '-created')[:4]
+
     return render(request, 
                   "article/list/article_detail.html", 
-                  {"article":article, "total_views":total_views, "most_viewed": most_viewed, "comment_form":comment_form})
+                  {"article":article, "total_views":total_views, "most_viewed": most_viewed, 
+                   "comment_form":comment_form, "similar_articles":similar_articles})
 
 
 @csrf_exempt
