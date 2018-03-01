@@ -29,7 +29,7 @@ DEBUG = True    # debug模式
 ALLOWED_HOSTS = []
 
 # 登录后重定向的设置
-LOGIN_REDIRECT_URL = '/blog/'
+LOGIN_REDIRECT_URL = '/home/'
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blog',         # 
     'account',
+    'password_reset',
+    'article',
+    'image',
+    'course',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +127,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR,"static"),)
+
+
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
