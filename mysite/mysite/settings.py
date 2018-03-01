@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'password_reset',
     'article',
     'image',
+    'course',
 ]
 
 MIDDLEWARE = [
