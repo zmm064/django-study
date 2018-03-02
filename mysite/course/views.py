@@ -1,5 +1,9 @@
 from django.views.generic import TemplateView, ListView
 from braces.views import LoginRequiredMixin
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic.edit import CreateView
+from django.shortcuts import redirect
+from .forms import CreateCourseForm
 
 from .models import Course
 
@@ -23,3 +27,17 @@ class CourseListView(ListView):
 class ManageCourseListView(UserCourseMixin, ListView):  # 一般将Mixin类放在左边，其它类放在右边
     context_object_name = "courses"    
     template_name = 'course/manage/manage_course_list.html'
+
+
+class CreateCourseView(UserCourseMixin, CreateView):
+    fields = ['title', 'overview']  # 声明在表单中显示的字段
+    template_name = 'course/manage/create_course.html'
+
+    def post(self, request, *args, **kargs):
+        form = CreateCourseForm(data=request.POST)
+        if form.is_valid():
+            new_course = form.save(commit=False)
+            new_course.user = self.request.user
+            new_course.save()
+            return redirect("course:manage_course")
+        return self.render_to_response({"form":form})
